@@ -1,0 +1,12 @@
+{
+  "port": 3002,
+  "database": {
+    "url": "mongodb://localhost:27017/myapp_staging"
+  },
+  "logLevel": "warn",
+  "featureFlag": {
+    "featureA": true,
+    "featureB": true
+  }
+}
+
