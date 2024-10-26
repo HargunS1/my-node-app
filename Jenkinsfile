@@ -40,8 +40,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
-                        sh "docker tag $DOCKER_IMAGE:$BUILD_NUMBER  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER" // Replace `mydockerhubusername` with your Docker Hub username
-                        sh "docker push  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER"
+                        sh "docker tag $DOCKER_IMAGE:$BUILD_NUMBER hargun1955991532/node-app:$BUILD_NUMBER"
+                        sh "docker push hargun1955991532/node-app:$BUILD_NUMBER"
                     }
                 }
             }
