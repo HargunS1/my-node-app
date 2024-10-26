@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         }
-
+        // change here if you want
         // Optional: Push to a Docker Registry if needed
         // stage('Push Docker Image to Registry') {
         //     steps {
