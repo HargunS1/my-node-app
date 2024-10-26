@@ -3,16 +3,16 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@dev-ec2-public-ip' // Replace with your dev EC2 IP
-        EC2_STAGING_HOST = 'ubuntu@staging-ec2-public-ip' // Replace with your staging EC2 IP
-        EC2_PROD_HOST = 'ubuntu@prod-ec2-public-ip' // Replace with your production EC2 IP
+        EC2_DEV_HOST = 'ubuntu@34.219.82.237' // Replace with your dev EC2 IP
+        EC2_STAGING_HOST = 'ubuntu@52.35.90.26' // Replace with your staging EC2 IP
+        EC2_PROD_HOST = 'ubuntu@54.202.60.180' // Replace with your production EC2 IP
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: env.BRANCH_NAME, url: 'https://github.com/user/repo.git'
+                git branch: env.BRANCH_NAME, url: 'https://github.com/HargunS1/my-node-app.git'
             }
         }
 
