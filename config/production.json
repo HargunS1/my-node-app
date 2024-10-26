@@ -1,0 +1,12 @@
+{
+  "port": 3000,
+  "logLevel": "error",
+  "database": {
+    "url": "mongodb://prod-db-url:27017/myapp"
+  },
+  "featureFlag": {
+    "featureA": true,
+    "featureB": true
+  }
+}
+

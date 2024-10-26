@@ -1,0 +1,9 @@
+{
+  "port": 3000,
+  "logLevel": "info",
+  "featureFlag": {
+    "featureA": false,
+    "featureB": false
+  }
+}
+
