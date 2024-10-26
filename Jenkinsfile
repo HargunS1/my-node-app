@@ -35,17 +35,17 @@ pipeline {
                 }
             }
         }
-        // change here if you want
-        // Optional: Push to a Docker Registry if needed
-        // stage('Push Docker Image to Registry') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://registry-url', 'docker-credentials-id') {
-        //                 sh "docker push $DOCKER_IMAGE:$BUILD_NUMBER"
-        //             }
-        //         }
-        //     }
-        // }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
+                        sh "docker tag $DOCKER_IMAGE:$BUILD_NUMBER  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER" // Replace `mydockerhubusername` with your Docker Hub username
+                        sh "docker push  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER"
+                    }
+                }
+            }
+        }
 
         stage('Deploy to Development Environment') {
             when {
@@ -55,7 +55,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull $DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp $DOCKER_IMAGE:$BUILD_NUMBER'
+                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp mydockerhubusername/$DOCKER_IMAGE:$BUILD_NUMBER'
                         """
                     }
                 }
@@ -70,7 +70,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull $DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp $DOCKER_IMAGE:$BUILD_NUMBER'
+                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp mydockerhubusername/$DOCKER_IMAGE:$BUILD_NUMBER'
                         """
                     }
                 }
@@ -85,7 +85,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull $DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp $DOCKER_IMAGE:$BUILD_NUMBER'
+                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp mydockerhubusername/$DOCKER_IMAGE:$BUILD_NUMBER'
                         """
                     }
                 }
@@ -102,7 +102,4 @@ pipeline {
         }
     }
 }
-
-
-
 
