@@ -69,10 +69,11 @@ pipeline {
             steps {
                 script {
                     sshagent(['aws-ec2-key']) {
-                        sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull  hargun1955991532/$DOCKER_IMAGE:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp mydockerhubusername/$DOCKER_IMAGE:$BUILD_NUMBER'
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
+                            sh """
+                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
+                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3000 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
+                            """
                     }
                 }
             }
