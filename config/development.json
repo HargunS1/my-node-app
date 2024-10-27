@@ -7,7 +7,7 @@
   "featureFlag": {
     "featureA": true,
     "featureB": false,
-    "featureC": false
+    "featureC": true
 
   }
 }
