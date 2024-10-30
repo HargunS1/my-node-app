@@ -20,6 +20,10 @@ if (featureFlag.featureB) {
     const featureB = require('./features/featureB');
     app.use('/featureB', featureB);
 }
+if (featureFlag.featureC) {  // New feature flag check
+    const featureC = require('./features/featureC');
+    app.use('/featureC', featureC);
+}
 
 // Routes
 app.use('/', routes);
