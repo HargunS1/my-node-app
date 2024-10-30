@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@54.189.115.164' // Replace with your dev EC2 IP
-        EC2_STAGING_HOST = 'ubuntu@44.243.184.139' // Replace with your staging EC2 IP
-        EC2_PROD_HOST = 'ubuntu@54.212.142.105' // Replace with your production EC2 IP
+        EC2_DEV_HOST = 'ubuntu@34.222.242.74'
+        EC2_STAGING_HOST = 'ubuntu@54.202.97.230'
+        EC2_PROD_HOST = 'ubuntu@34.221.57.34'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
@@ -31,7 +31,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t $DOCKER_IMAGE:$BUILD_NUMBER .'
+                    sh "docker build -t $DOCKER_IMAGE:${env.BRANCH_NAME}-${BUILD_NUMBER} ."
                 }
             }
         }
@@ -40,8 +40,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
-                        sh "docker tag $DOCKER_IMAGE:$BUILD_NUMBER hargun1955991532/node-app:$BUILD_NUMBER"
-                        sh "docker push hargun1955991532/node-app:$BUILD_NUMBER"
+                        sh "docker tag $DOCKER_IMAGE:${env.BRANCH_NAME}-${BUILD_NUMBER} hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
+                        sh "docker push hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
                     }
                 }
             }
@@ -54,12 +54,9 @@ pipeline {
             steps {
                 script {
                     sshagent(['aws-ec2-key']) {
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
-                            sh """
-                            ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
-                            """
-                        }
+                        sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:dev-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER}'
+                        """
                     }
                 }
             }
@@ -72,12 +69,9 @@ pipeline {
             steps {
                 script {
                     sshagent(['aws-ec2-key']) {
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
-                            sh """
-                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
-                            """
-                        }
+                        sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:staging-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER}'
+                        """
                     }
                 }
             }
@@ -90,12 +84,9 @@ pipeline {
             steps {
                 script {
                     sshagent(['aws-ec2-key']) {
-                        withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
-                            sh """
-                            ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
-                            """
-                        }
+                        sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:main-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER}'
+                        """
                     }
                 }
             }
@@ -111,3 +102,4 @@ pipeline {
         }
     }
 }
+
