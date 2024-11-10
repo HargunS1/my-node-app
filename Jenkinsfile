@@ -95,7 +95,7 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment successful from my side'
+            echo 'Deployment successful from my side!!'
         }
         failure {
             echo 'Deployment failed !!'
