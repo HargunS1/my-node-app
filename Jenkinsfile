@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@54.189.115.164' // Replace with your dev EC2 IP
-        EC2_STAGING_HOST = 'ubuntu@44.243.184.139' // Replace with your staging EC2 IP
-        EC2_PROD_HOST = 'ubuntu@54.212.142.105' // Replace with your production EC2 IP
+        EC2_DEV_HOST = 'ubuntu@34.221.167.244' // Replace with your dev EC2 IP
+        EC2_STAGING_HOST = 'ubuntu@18.239.79.45' // Replace with your staging EC2 IP
+        EC2_PROD_HOST = 'ubuntu@34.218.239.115' // Replace with your production EC2 IP
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
