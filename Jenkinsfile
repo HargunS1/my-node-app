@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@54.190.196.81'
-        EC2_STAGING_HOST = 'ubuntu@35.95.27.93'
-        EC2_PROD_HOST = 'ubuntu@54.213.67.57'
+        EC2_DEV_HOST = 'ubuntu@52.25.111.94'
+        EC2_STAGING_HOST = 'ubuntu@50.112.122.55'
+        EC2_PROD_HOST = 'ubuntu@52.34.200.151'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
@@ -95,7 +95,7 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment successful yyyfrom my side!!'
+            echo 'Deployment successful yyyfffrom my side!!'
         }
         failure {
             echo 'Deployment failed !!'
