@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "config": "^3.3.6"
+    "config": "^3.3.6",
+    "prom-client": "^14.0.1"
   }
 }
 
