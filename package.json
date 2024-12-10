@@ -8,8 +8,8 @@
     "test": "echo \"No tests defined\" && exit 0"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "config": "^3.3.6"
+    "config": "^3.3.12",
+    "express": "^4.21.2",
+    "prom-client": "^14.0.1"
   }
 }
-
