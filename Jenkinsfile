@@ -7,6 +7,7 @@ pipeline {
         EC2_STAGING_HOST = 'ubuntu@50.112.122.55'
         EC2_PROD_HOST = 'ubuntu@52.34.200.151'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
+        PROMETHEUS_CONFIG = "/opt/prometheus/prometheus.yml" // Path to Prometheus config file
     }
 
     stages {
@@ -42,6 +43,21 @@ pipeline {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
                         sh "docker tag $DOCKER_IMAGE:${env.BRANCH_NAME}-${BUILD_NUMBER} hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
                         sh "docker push hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
+                    }
+                }
+            }
+        }
+
+        stage('Setup Monitoring Tools') {
+            steps {
+                script {
+                    sshagent(['aws-ec2-key']) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST '
+                            docker run -d --name=prometheus -p 9090:9090 -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus &&
+                            docker run -d --name=grafana -p 3000:3000 grafana/grafana
+                        '
+                        """
                     }
                 }
             }
@@ -95,10 +111,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment successful yyyfffrom my side!!'
+            echo 'Deployment successful, and monitoring tools are running!'
         }
         failure {
-            echo 'Deployment failed !!'
+            echo 'Deployment failed!'
         }
     }
 }
