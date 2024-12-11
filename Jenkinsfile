@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@34.221.167.244' // Replace with your dev EC2 IP
-        EC2_STAGING_HOST = 'ubuntu@18.239.79.45' // Replace with your staging EC2 IP
-        EC2_PROD_HOST = 'ubuntu@34.218.239.115' // Replace with your production EC2 IP
+        EC2_DEV_HOST = 'ubuntu@34.222.81.61' // Replace with your dev EC2 IP
+        EC2_STAGING_HOST = 'ubuntu@34.222.30.135' // Replace with your staging EC2 IP
+        EC2_PROD_HOST = 'ubuntu@18.236.233.158
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
@@ -57,7 +57,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
                             sh """
                             ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
+                            ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
                             """
                         }
                     }
@@ -75,7 +75,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
                             sh """
                             ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
+                            ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
                             """
                         }
                     }
@@ -93,7 +93,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
                             sh """
                             ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'echo "$DOCKER_HUB_PASS" | docker login -u "$DOCKER_HUB_USER" --password-stdin'
-                            ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
+                            ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:$BUILD_NUMBER && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:$BUILD_NUMBER'
                             """
                         }
                     }
