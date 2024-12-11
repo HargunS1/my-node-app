@@ -3,12 +3,11 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@52.25.111.94'
-        EC2_STAGING_HOST = 'ubuntu@50.112.122.55'
-        EC2_PROD_HOST = 'ubuntu@52.34.200.151'
+        EC2_DEV_HOST = 'ubuntu@34.222.81.61'
+        EC2_STAGING_HOST = 'ubuntu@34.222.30.135'
+        EC2_PROD_HOST = 'ubuntu@18.236.233.158'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
-        AWS_KEY1 = credentials('aws-ec2-key1') // Jenkins credential for SSH
-        PROMETHEUS_CONFIG = "/opt/prometheus/prometheus.yml" // Path to Prometheus config file
+        
     }
 
     stages {
@@ -44,21 +43,6 @@ pipeline {
                     docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
                         sh "docker tag $DOCKER_IMAGE:${env.BRANCH_NAME}-${BUILD_NUMBER} hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
                         sh "docker push hargun1955991532/node-app:${env.BRANCH_NAME}-${BUILD_NUMBER}"
-                    }
-                }
-            }
-        }
-
-        stage('Setup Monitoring Tools') {
-            steps {
-                script {
-                    sshagent(['aws-ec2-key1']) {
-                        sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST '
-                            docker run -d --name=prometheus -p 9090:9090 -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus &&
-                            docker run -d --name=grafana -p 3000:3000 grafana/grafana
-                        '
-                        """
                     }
                 }
             }
