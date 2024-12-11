@@ -7,6 +7,7 @@ pipeline {
         EC2_STAGING_HOST = 'ubuntu@50.112.122.55'
         EC2_PROD_HOST = 'ubuntu@52.34.200.151'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
+        AWS_KEY1 = credentials('aws-ec2-key1') // Jenkins credential for SSH
         PROMETHEUS_CONFIG = "/opt/prometheus/prometheus.yml" // Path to Prometheus config file
     }
 
@@ -51,7 +52,7 @@ pipeline {
         stage('Setup Monitoring Tools') {
             steps {
                 script {
-                    sshagent(['aws-ec2-key']) {
+                    sshagent(['aws-ec2-key1']) {
                         sh """
                         ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST '
                             docker run -d --name=prometheus -p 9090:9090 -v /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus &&
