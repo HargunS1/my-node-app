@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "myapp/node-app"
-        EC2_DEV_HOST = 'ubuntu@34.221.167.244'
-        EC2_STAGING_HOST = 'ubuntu@18.236.79.45'
-        EC2_PROD_HOST = 'ubuntu@34.218.239.115'
+        EC2_DEV_HOST = 'ubuntu@34.222.81.61'
+        EC2_STAGING_HOST = 'ubuntu@34.222.30.135'
+        EC2_PROD_HOST = 'ubuntu@18.236.233.158'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
     }
 
@@ -55,7 +55,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:dev-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:dev-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER}'
                         """
                     }
                 }
@@ -70,7 +70,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:staging-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:staging-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER}'
                         """
                     }
                 }
@@ -85,7 +85,7 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:main-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 3000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:main-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER}'
                         """
                     }
                 }
