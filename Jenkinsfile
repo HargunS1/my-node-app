@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = "myapp/node-app"
         EC2_DEV_HOST = 'ubuntu@44.245.142.30'
         EC2_STAGING_HOST = 'ubuntu@52.32.203.19'
-        EC2_PROD_HOST = 'ubuntu52.25.111.94'
+        EC2_PROD_HOST = 'ubuntu@52.25.111.94'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
         
     }
