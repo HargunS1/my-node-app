@@ -7,7 +7,6 @@ pipeline {
         EC2_STAGING_HOST = 'ubuntu@52.32.203.19'
         EC2_PROD_HOST = 'ubuntu@52.25.111.94'
         AWS_KEY = credentials('aws-ec2-key') // Jenkins credential for SSH
-        
     }
 
     stages {
@@ -56,7 +55,18 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST 'docker pull hargun1955991532/node-app:dev-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_DEV_HOST '
+                          docker pull hargun1955991532/node-app:dev-${BUILD_NUMBER} &&
+                          docker stop nodeapp || true &&
+                          docker rm nodeapp || true &&
+                          docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER} &&
+                          docker run -d --name=cadvisor -p 8081:8080 \
+                            --volume=/:/rootfs:ro \
+                            --volume=/var/run:/var/run:ro \
+                            --volume=/sys:/sys:ro \
+                            --volume=/var/lib/docker/:/var/lib/docker:ro \
+                            gcr.io/cadvisor/cadvisor:latest
+                        '
                         """
                     }
                 }
@@ -71,7 +81,18 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST 'docker pull hargun1955991532/node-app:staging-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_STAGING_HOST '
+                          docker pull hargun1955991532/node-app:staging-${BUILD_NUMBER} &&
+                          docker stop nodeapp || true &&
+                          docker rm nodeapp || true &&
+                          docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER} &&
+                          docker run -d --name=cadvisor -p 8081:8080 \
+                            --volume=/:/rootfs:ro \
+                            --volume=/var/run:/var/run:ro \
+                            --volume=/sys:/sys:ro \
+                            --volume=/var/lib/docker/:/var/lib/docker:ro \
+                            gcr.io/cadvisor/cadvisor:latest
+                        '
                         """
                     }
                 }
@@ -86,7 +107,18 @@ pipeline {
                 script {
                     sshagent(['aws-ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST 'docker pull hargun1955991532/node-app:main-${BUILD_NUMBER} && docker stop nodeapp || true && docker rm nodeapp || true && docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER}'
+                        ssh -o StrictHostKeyChecking=no $EC2_PROD_HOST '
+                          docker pull hargun1955991532/node-app:main-${BUILD_NUMBER} &&
+                          docker stop nodeapp || true &&
+                          docker rm nodeapp || true &&
+                          docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER} &&
+                          docker run -d --name=cadvisor -p 8081:8080 \
+                            --volume=/:/rootfs:ro \
+                            --volume=/var/run:/var/run:ro \
+                            --volume=/sys:/sys:ro \
+                            --volume=/var/lib/docker/:/var/lib/docker:ro \
+                            gcr.io/cadvisor/cadvisor:latest
+                        '
                         """
                     }
                 }
@@ -103,3 +135,4 @@ pipeline {
         }
     }
 }
+
