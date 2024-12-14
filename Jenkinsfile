@@ -60,6 +60,8 @@ pipeline {
                           docker stop nodeapp || true &&
                           docker rm nodeapp || true &&
                           docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:dev-${BUILD_NUMBER} &&
+                          docker stop cadvisor || true &&
+                          docker rm cadvisor || true &&
                           docker run -d --name=cadvisor -p 8081:8080 \
                             --volume=/:/rootfs:ro \
                             --volume=/var/run:/var/run:ro \
@@ -86,6 +88,8 @@ pipeline {
                           docker stop nodeapp || true &&
                           docker rm nodeapp || true &&
                           docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:staging-${BUILD_NUMBER} &&
+                          docker stop cadvisor || true &&
+                          docker rm cadvisor || true &&
                           docker run -d --name=cadvisor -p 8081:8080 \
                             --volume=/:/rootfs:ro \
                             --volume=/var/run:/var/run:ro \
@@ -112,6 +116,8 @@ pipeline {
                           docker stop nodeapp || true &&
                           docker rm nodeapp || true &&
                           docker run -d -p 4000:3001 --name nodeapp hargun1955991532/node-app:main-${BUILD_NUMBER} &&
+                          docker stop cadvisor || true &&
+                          docker rm cadvisor || true &&
                           docker run -d --name=cadvisor -p 8081:8080 \
                             --volume=/:/rootfs:ro \
                             --volume=/var/run:/var/run:ro \
@@ -135,4 +141,3 @@ pipeline {
         }
     }
 }
-
